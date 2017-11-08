@@ -30,9 +30,16 @@ using Windows.Graphics.Imaging;
 using System.Runtime.InteropServices.WindowsRuntime;
 #endif
 
+#if __TIZEN__
+using System.Collections.Generic;
+using System.Linq;
+using Tizen.Multimedia;
+using Tizen.Multimedia.Util;
+#endif
+
 namespace XamFormsImageResize
 {
-	public static class ImageResizer
+    public static class ImageResizer
 	{
 		static ImageResizer()
 		{
@@ -55,7 +62,10 @@ namespace XamFormsImageResize
 #if WINDOWS_UWP
             return await ResizeImageWindows(imageData, width, height);
 #endif
-		}
+#if __TIZEN__
+			return await ResizeImageTizen(imageData, width, height);
+#endif
+        }
 
 
 #if __IOS__
@@ -105,7 +115,7 @@ namespace XamFormsImageResize
 #endif
 
 #if __ANDROID__
-		
+
 		public static byte[] ResizeImageAndroid (byte[] imageData, float width, float height)
 		{
 			// Load the bitmap
@@ -122,7 +132,7 @@ namespace XamFormsImageResize
 #endif
 
 #if WINDOWS_PHONE
-		
+
         public static byte[] ResizeImageWinPhone (byte[] imageData, float width, float height)
         {
             byte[] resizedData;
@@ -139,7 +149,7 @@ namespace XamFormsImageResize
             }
             return resizedData;
         }
-        
+
 #endif
 
 #if WINDOWS_PHONE_APP
@@ -161,8 +171,8 @@ namespace XamFormsImageResize
                     await encoder.FlushAsync();
                     resizedStream.Seek(0);
                     resizedData = new byte[resizedStream.Size];
-                    await resizedStream.ReadAsync(resizedData.AsBuffer(), (uint)resizedStream.Size, InputStreamOptions.None);                  
-                }                
+                    await resizedStream.ReadAsync(resizedData.AsBuffer(), (uint)resizedStream.Size, InputStreamOptions.None);
+                }
             }
 
             return resizedData;
@@ -189,14 +199,49 @@ namespace XamFormsImageResize
                     await encoder.FlushAsync();
                     resizedStream.Seek(0);
                     resizedData = new byte[resizedStream.Size];
-                    await resizedStream.ReadAsync(resizedData.AsBuffer(), (uint)resizedStream.Size, InputStreamOptions.None);                  
-                }                
+                    await resizedStream.ReadAsync(resizedData.AsBuffer(), (uint)resizedStream.Size, InputStreamOptions.None);
+                }
             }
 
             return resizedData;
         }
 
 #endif
-	}
-}
 
+#if __TIZEN__
+        public static async Task<byte[]> ResizeImageTizen(byte[] imageData, float width, float height)
+        {
+            using (JpegDecoder jpegDecoder = new JpegDecoder())
+            {
+                Size newImageSize = new Size((int)width, (int)height);
+                IEnumerable<BitmapFrame> image = await jpegDecoder.DecodeAsync(imageData);
+                Size oldImageSize = image.First().Size;
+                byte[] rawImageData = image.First().Buffer;
+                using (MediaPacket mediaPacket = MediaPacket.Create(new VideoMediaFormat(MediaFormatVideoMimeType.Rgba, oldImageSize)))
+                {
+                    mediaPacket.VideoPlanes[0].Buffer.CopyFrom(rawImageData, 0, rawImageData.Length);
+                    using (ImageTransformer imageTransformer = new ImageTransformer())
+                    {
+                        using (MediaPacket newMediaPacket = await imageTransformer.TransformAsync(mediaPacket, new ResizeTransform(newImageSize)))
+                        {
+                            IMediaBuffer buffer = newMediaPacket.VideoPlanes[0].Buffer;
+                            byte[] newRawImageData = new byte[buffer.Length];
+                            buffer.CopyTo(newRawImageData, 0, buffer.Length);
+                            using (var jpegEncoder = new JpegEncoder())
+                            {
+                                jpegEncoder.Quality = 100;
+                                jpegEncoder.SetResolution(newImageSize);
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    await jpegEncoder.EncodeAsync(newRawImageData, ms);
+                                    return ms.ToArray();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+#endif
+    }
+}
