@@ -3,7 +3,7 @@ WeatherApp for Xamarin.Forms
 
 WeatherApp is an example that accompanies [Learn app-building basics with Xamarin.Forms in Visual Studio](https://msdn.microsoft.com/library/mt679501.aspx) (MSDN Library).
 
-It consists of a PCL that contains all the UI and business logic. The platform-specific projects for Android, iOS, and Windows are the minimal app stubs.
+It consists of a PCL that contains all the UI and business logic. The platform-specific projects for Android, iOS, Windows, and Tizen are the minimal app stubs.
 
 ![screenshot](Screenshots/WeatherApp-All-sml.png)
 
