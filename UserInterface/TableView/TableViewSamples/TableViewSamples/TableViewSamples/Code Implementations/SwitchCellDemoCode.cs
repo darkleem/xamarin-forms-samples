@@ -1,10 +1,8 @@
-﻿using System;
-
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace TableViewSamples
 {
-	public class SwitchCellDemoCode : ContentPage
+    public class SwitchCellDemoCode : ContentPage
 	{
 		public SwitchCellDemoCode ()
 		{
@@ -16,8 +14,10 @@ namespace TableViewSamples
 			var switchOn = new SwitchCell { Text = "On", On = true };
 			var switchOff = new SwitchCell { Text = "Off", On = false };
 
-			section1.Add (switchOn); 
+			section1.Add (switchOn);
 			section1.Add (switchOff);
+            root.Add(section1);
+            table.Root = root;
 
 			Content = table;
 		}
