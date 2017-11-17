@@ -4,16 +4,30 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:WorkingWithImages;assembly=WorkingWithImages"
     x:Class="WorkingWithImages.EmbeddedImagesXaml">
-   	<ContentPage.Padding>
-		<OnPlatform x:TypeArguments="Thickness">
-			<On Platform="iOS" Value="0, 20, 0, 0" />
-		</OnPlatform>
-	</ContentPage.Padding>
-  <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-    <Label Text="Image Resource Xaml" />
-    <!-- uses a custom Extension defined in this project for now -->
-    <Image Source="{local:ImageResource WorkingWithImages.beach.jpg}" />
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness">
+            <On Platform="iOS" Value="0, 20, 0, 0" />
+        </OnPlatform>
+    </ContentPage.Padding>
+    <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+        <Label Text="Image Resource Xaml" />
+        <OnPlatform x:TypeArguments="View">
+            <On Platform="iOS, Android, UWP, WinPhone, WinRT">
+                <On.Value>
+                    <Image Source="{local:ImageResource WorkingWithImages.beach.jpg}" />
+                </On.Value>
+            </On>
+            <On Platform="Tizen">
+                <On.Value>
+                    <Frame>
+                        <Label Text="ImageSource.FromResource() is currently not supported on Tizen platform." />
+                    </Frame>
+                </On.Value>
+            </On>
+        </OnPlatform>
 
-    <Label Text="WorkingWithImages.beach.jpg embedded resource" />
-  </StackLayout>
+        <Label Text="WorkingWithImages.beach.jpg embedded resource" />
+        <!-- uses a custom Extension defined in this project for now -->
+
+    </StackLayout>
 </ContentPage>
