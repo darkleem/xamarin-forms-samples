@@ -33,6 +33,11 @@ using Windows.UI.Xaml.Media;
 using Xamarin.Forms.Platform.UWP;
 #endif
 
+#if __TIZEN__
+using System;
+using Xamarin.Forms.Platform.Tizen;
+#endif
+
 namespace NestPlatformControl
 {
 	public class HomePageCS : ContentPage
@@ -251,10 +256,62 @@ namespace NestPlatformControl
 			frameworkElement.Arrange(new Rect(0, 0, finalSize.Width * 2, finalSize.Height));
 			return finalSize;
 			});
-			#endif
-		}
-			
-		#if __IOS__
+#endif
+
+            #if __TIZEN__
+            const string originalText = "Native ElmSharp.Label.";
+            const string longerText = "Native ElmSharp.Label. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vel elit orci. Nam sollicitudin consectetur congue.";
+
+            var label = new ElmSharp.Label(Forms.Context.MainWindow)
+            {
+                Text = originalText,
+                // Line Wrap does not applied to longerText as expected because ElmSharp.Label does not measure itself.
+                LineWrapType = ElmSharp.WrapType.Char
+            };
+            stackLayout.Children.Add(label);
+
+            var button = new ElmSharp.Button(Forms.Context.MainWindow)
+            {
+                Text = "Change Text"
+            };
+            button.Clicked += (sender, args) =>
+            {
+                label.Text = label.Text == originalText ? longerText : originalText;
+            };
+            stackLayout.Children.Add(button);
+
+            var explanation1 = new ElmSharp.Label(Forms.Context.MainWindow)
+            {
+                Text = "The next control is a CustomControl (a customized ElmSharp.Label without any measurement method).",
+                LineWrapType = ElmSharp.WrapType.Char,
+            };
+            // measureDelegate is required to show the line wrap option properly.
+            stackLayout.Children.Add(explanation1, FixSize);
+
+            var brokenControl = new CustomControl(Forms.Context.MainWindow)
+            {
+                Text = "This control has incorrect sizing - there's empty space above and below it.",
+                FontSize = 28
+            };
+            stackLayout.Children.Add(brokenControl);
+
+            var explanation2 = new ElmSharp.Label(Forms.Context.MainWindow)
+            {
+                Text = "The next control is a CustomControl, but with a custom GetDesiredSize delegate to accomodate it's sizing problem.",
+                LineWrapType = ElmSharp.WrapType.Word,
+            };
+            stackLayout.Children.Add(explanation2, FixSize);
+
+            var goodControl = new CustomControl(Forms.Context.MainWindow)
+            {
+                Text = "This control has correct sizing - it occupies the available size of the device - (one two three four five six).",
+                FontSize = 28
+            };
+            stackLayout.Children.Add(goodControl, FixSize);
+#endif
+        }
+
+#if __IOS__
 		SizeRequest? FixSize (NativeViewWrapperRenderer renderer, double width, double height)
 		{
 			var uiView = renderer.Control;
@@ -287,7 +344,49 @@ namespace NestPlatformControl
 			nativeView.Measure (widthSpec, heightConstraint);
 			return new SizeRequest (new Size (nativeView.MeasuredWidth, nativeView.MeasuredHeight));
 		}
-		#endif
-	}
+#endif
+
+        #if __TIZEN__
+        ElmSharp.Size? FixSize (EvasObjectWrapperRenderer renderer, int availableWidth, int availableHeight)
+        {
+            var nativeView = renderer.NativeView as ElmSharp.Label;
+
+            if ((availableWidth == 0 && availableHeight == 0) || nativeView == null)
+            {
+                return null;
+            }
+
+            var size = nativeView.Geometry;
+
+            nativeView.Resize(availableWidth, size.Height);
+
+            var rawSize = nativeView.EdjeObject["elm.text"].TextBlockNativeSize;
+            var formattedSize = nativeView.EdjeObject["elm.text"].TextBlockFormattedSize;
+
+            nativeView.Resize(size.Width, size.Height);
+
+            // Set bottom padding for lower case letters that have segments below the bottom line of text (g, j, p, q, y).
+            if(nativeView is CustomControl customView)
+            {
+                var verticalPadding = (int)Math.Ceiling(0.05 * customView.FontSize);
+                rawSize.Height += verticalPadding;
+                formattedSize.Height += verticalPadding;
+            }
+
+            if (rawSize.Width > availableWidth)
+            {
+                return new ElmSharp.Size()
+                {
+                    Width = formattedSize.Width,
+                    Height = Math.Min(formattedSize.Height, Math.Max(rawSize.Height, availableHeight)),
+                };
+            }
+            else
+            {
+                return formattedSize;
+            }
+        }
+#endif
+    }
 }
 
