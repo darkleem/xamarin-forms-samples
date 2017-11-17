@@ -17,8 +17,17 @@ namespace WorkingWithImages
 			if (Source == null)
 				return null;
 
-			// Do your translation lookup here, using whatever method you require
-			var imageSource = ImageSource.FromResource(Source); 
+            ImageSource imageSource = null;
+            // Do your translation lookup here, using whatever method you require
+            // 'try-catch' clause is used to handle unsupported method on Tizen platform.
+            try
+            {
+                imageSource = ImageSource.FromResource(Source);
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine("ImageSource.FromResource() is currently not supported on Tizen platform.");
+            }
 
 			return imageSource;
 		}
