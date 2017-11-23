@@ -2,6 +2,8 @@
 {
     class Program : global::Xamarin.Forms.Platform.Tizen.FormsApplication
     {
+        public static ElmSharp.Window NativeMainWindow => global::Xamarin.Forms.Platform.Tizen.Forms.Context.MainWindow;
+
         protected override void OnCreate()
         {
             base.OnCreate();
