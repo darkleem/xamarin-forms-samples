@@ -5,6 +5,8 @@
 		xmlns:androidWidget="clr-namespace:Android.Widget;assembly=Mono.Android;targetPlatform=Android"
 		xmlns:formsAndroid="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.Platform.Android;targetPlatform=Android"
     	xmlns:winControls="clr-namespace:Windows.UI.Xaml.Controls;assembly=Windows, Version=255.255.255.255, Culture=neutral, PublicKeyToken=null, ContentType=WindowsRuntime;targetPlatform=Windows"
+        xmlns:tizenLocal="clr-namespace:NativeViewInsideContentView.Tizen;assembly=NativeViewInsideContentView.Tizen;targetPlatform=Tizen"
+        xmlns:tizenWidget="clr-namespace:ElmSharp;assembly=ElmSharp;targetPlatform=Tizen"
     	xmlns:local="clr-namespace:NativeViewInsideContentView" 
 		x:Class="NativeViewInsideContentView.NativeViewInsideContentViewPage">
 	<StackLayout Margin="20">
@@ -12,11 +14,13 @@
 			<ios:UILabel Text="Text in a UILabel" TextColor="{x:Static ios:UIColor.Red}" />
 			<androidWidget:TextView x:Arguments="{x:Static formsAndroid:Forms.Context}" Text="Text in a TextView" />
       		<winControls:TextBlock Text="Text in a TextBlock" />
-    	</ContentView>
+            <tizenWidget:Label x:Arguments="{x:Static tizenLocal:Program.NativeMainWindow}}" Text="Text in a Label" />
+        </ContentView>
 		<ContentView x:Name="contentViewButtonParent" HorizontalOptions="Center" VerticalOptions="EndAndExpand">
 			<ios:UIButton TouchUpInside="OnButtonTap" View.HorizontalOptions="Center" View.VerticalOptions="Center" />
 			<androidWidget:Button x:Arguments="{x:Static formsAndroid:Forms.Context}" Text="Scale and Rotate Text" Click="OnButtonTap" />
 			<winControls:Button Content="Scale and Rotate Text" />
+            <tizenWidget:Button x:Arguments="{x:Static tizenLocal:Program.NativeMainWindow}}" Text="Scale and Rotate Text" Clicked="OnButtonTap" />
 		</ContentView>
 	</StackLayout>
 </ContentPage>
