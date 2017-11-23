@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" Type="Project" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" xmlns:sdk="http://schemas.microsoft.com/developer/vstemplate-sdkextension/2010">
+  <TemplateData>
+    <Name>Blank App (Xamarin.Forms Tizen Only)</Name>
+    <Description>Tizen Native Xamarin project</Description>
+    <Icon>XamarinTizenOnly.ico</Icon>
+    <ProjectType>CSharp</ProjectType>
+    <SortOrder>1000</SortOrder>
+    <TemplateID>64dea8d4-f5bb-4141-9142-0a6bdcc1a885</TemplateID>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>XamarinTizen</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <CreateInPlace>true</CreateInPlace>
+  </TemplateData>
+  <TemplateContent>
+    <Project File="ProjectTemplate.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" OpenInEditor="true">App.cs</ProjectItem>
+      <ProjectItem TargetFileName="shared\res\icon.png">icon.png</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="tizen-manifest.xml">tizen-manifest.xml</ProjectItem>
+      <Folder Name="lib"></Folder>
+      <Folder Name="res"></Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
