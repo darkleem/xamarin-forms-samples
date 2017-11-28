@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomRenderer.WinPhone81",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomRenderer.UWP", "UWP\CustomRenderer.UWP.csproj", "{B975E2A7-E523-4D62-92B0-41606E74D805}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomRenderer.ContentPage.Tizen", "Tizen\CustomRenderer.ContentPage.Tizen.csproj", "{25BCE097-3B9A-4732-B0CE-F034CCA2D13F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomRenderer.Tizen", "Tizen\CustomRenderer.Tizen.csproj", "{25BCE097-3B9A-4732-B0CE-F034CCA2D13F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
